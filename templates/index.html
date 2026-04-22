@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARGOS | Automated Recognition & Gathering Observation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #05070a;
+            --panel-color: #0d1117;
+            --accent-color: #00d4ff;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --text-color: #e6edf3;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+            --danger: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            letter-spacing: 4px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent-color), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            gap: 20px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .panel {
+            background: var(--panel-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel-header {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* VIDEO FEED */
+        .video-container {
+            position: relative;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-glow);
+            animation: scan 4s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* LISTS */
+        .scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .person-item {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .person-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+        }
+
+        .person-item.active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .person-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .person-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* PROFILE DETAILS */
+        .detail-view {
+            padding: 20px;
+        }
+
+        .profile-card {
+            margin-bottom: 20px;
+        }
+
+        .profile-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .profile-content {
+            font-size: 14px;
+            line-height: 1.6;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .transcript-item {
+            font-size: 13px;
+            padding: 10px;
+            border-left: 2px solid var(--accent-color);
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z" fill="url(#grad1)"/>
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#fff;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <h1>ARGOS</h1>
+        </div>
+        <div class="status-badge">
+            <div class="pulse"></div>
+            <span>System Active | Observation Node 01</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- LEFT: TARGET LIST -->
+        <section class="panel">
+            <div class="panel-header">Observatory Targets</div>
+            <div class="scrollable" id="people-list">
+                <!-- People will be loaded here -->
+            </div>
+        </section>
+
+        <!-- CENTER: LIVE STREAM -->
+        <section class="panel video-container">
+            <div class="panel-header" style="position: absolute; top:0; left:0; width:100%; z-index:20;">Live Feed [Stream_01]</div>
+            <img src="/video_feed" class="video-feed" alt="Live Stream">
+            <div class="scanline"></div>
+        </section>
+
+        <!-- RIGHT: INTELLIGENCE DEBRIEF -->
+        <section class="panel">
+            <div class="panel-header">Intelligence Debrief</div>
+            <div class="scrollable detail-view" id="details-view">
+                <div style="text-align: center; margin-top: 100px; color: var(--text-muted);">
+                    <p>Select a target to view detailed intelligence profile</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function fetchPeople() {
+            try {
+                const response = await fetch('/api/people');
+                const people = await response.json();
+                const list = document.getElementById('people-list');
+                list.innerHTML = people.map(p => `
+                    <div class="person-item" onclick="loadDetails(${p.id})">
+                        <div class="person-name">${p.name}</div>
+                        <div class="person-info">ID: ${p.id.toString().padStart(4, '0')} | DETECTED: ${new Date(p.created_at).toLocaleTimeString()}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Failed to fetch people", err);
+            }
+        }
+
+        async function loadDetails(id) {
+            // UI Feedback
+            document.querySelectorAll('.person-item').forEach(el => el.classList.remove('active'));
+            
+            try {
+                const response = await fetch(`/api/person/${id}`);
+                const data = await response.json();
+                const view = document.getElementById('details-view');
+                
+                let profilesHtml = '';
+                for (const [key, value] of Object.entries(data.profile)) {
+                    profilesHtml += `
+                        <div class="profile-card">
+                            <span class="profile-label">${key}</span>
+                            <div class="profile-content">${value}</div>
+                        </div>
+                    `;
+                }
+
+                let transcriptsHtml = data.transcripts.map(t => `
+                    <div class="transcript-item">
+                        ${t.text}
+                        <span class="timestamp">${new Date(t.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                `).join('');
+
+                view.innerHTML = `
+                    <h2 style="margin-bottom: 20px; font-weight: 600;">${data.name}</h2>
+                    <div class="profile-grid">
+                        ${profilesHtml || '<p style="color:var(--text-muted)">No profile data extracted yet.</p>'}
+                    </div>
+                    <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">Recent Transcripts</h3>
+                    <div class="transcripts-list">
+                        ${transcriptsHtml || '<p style="color:var(--text-muted)">No conversations recorded.</p>'}
+                    </div>
+                `;
+            } catch (err) {
+                console.error("Failed to load details", err);
+            }
+        }
+
+        // Auto-refresh target list
+        setInterval(fetchPeople, 5000);
+        fetchPeople();
+
+    </script>
+</body>
+</html>
