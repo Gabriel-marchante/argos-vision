@@ -182,9 +182,12 @@ Las contribuciones son bienvenidas. Abre un issue para discutir cambios importan
 
 ---
 
-## 📜 Licencia
+## ✍️ Créditos
 
-MIT License — Ver [LICENSE](LICENSE) para más detalles.
+Desarrollado por **Macloud Team (Gabriel Marchante)**. Inspirado en herramientas de seguridad clásicas y estética retro-futurista.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gabriel-m-833856242/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/Gabriel-marchante)
 
 ---
 
@@ -192,6 +195,6 @@ MIT License — Ver [LICENSE](LICENSE) para más detalles.
 
 *"Cien ojos abiertos. Nada escapa."*
 
-**ARGOS** · 2026
+
 
 </div>
