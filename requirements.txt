@@ -1,5 +1,5 @@
 opencv-python
-mediapipe
+
 face_recognition
 numpy
 fastapi
@@ -7,7 +7,7 @@ uvicorn
 sqlalchemy
 python-dotenv
 openai-whisper
-pyaudio
+sounddevice
 requests
 python-multipart
 # AI integrations

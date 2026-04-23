@@ -1,4 +1,5 @@
-import pyaudio
+import sounddevice as sd
+import numpy as np
 import wave
 import os
 import threading
@@ -6,78 +7,60 @@ from pathlib import Path
 
 class AudioRecorder:
     def __init__(self, output_dir="data/audio_chunks"):
-        self.chunk = 1024
-        self.format = pyaudio.paInt16
         self.channels = 1
         self.rate = 16000 # Whisper likes 16kHz
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        self.p = pyaudio.PyAudio()
         self.frames = []
         self.recording = False
         self.thread = None
+        self.stream = None
 
     def start_recording(self):
         self.frames = []
         self.recording = True
-        self.thread = threading.Thread(target=self._record)
-        self.thread.start()
-        print("Recording started...")
-
-    def _record(self):
-        stream = self.p.open(format=self.format,
-                            channels=self.channels,
-                            rate=self.rate,
-                            input=True,
-                            frames_per_buffer=self.chunk)
-        while self.recording:
-            data = stream.read(self.chunk)
-            self.frames.append(data)
         
-        stream.stop_stream()
-        stream.close()
+        def callback(indata, frames, time, status):
+            if status:
+                print(status)
+            self.frames.append(indata.copy())
+            
+        self.stream = sd.InputStream(samplerate=self.rate, channels=self.channels, dtype='int16', callback=callback)
+        self.stream.start()
+        print("Recording started...")
 
     def stop_recording(self, filename="temp.wav"):
         self.recording = False
-        if self.thread:
-            self.thread.join()
-        
+        if self.stream:
+            self.stream.stop()
+            self.stream.close()
+            
         output_path = self.output_dir / filename
-        wf = wave.open(str(output_path), 'wb')
-        wf.setnchannels(self.channels)
-        wf.setsampwidth(self.p.get_sample_size(self.format))
-        wf.setframerate(self.rate)
-        wf.writeframes(b''.join(self.frames))
-        wf.close()
+        if self.frames:
+            audio_data = np.concatenate(self.frames, axis=0)
+            with wave.open(str(output_path), 'wb') as wf:
+                wf.setnchannels(self.channels)
+                wf.setsampwidth(2) # 2 bytes for int16
+                wf.setframerate(self.rate)
+                wf.writeframes(audio_data.tobytes())
         print(f"Recording saved to {output_path}")
         return output_path
 
     def __del__(self):
-        self.p.terminate()
+        if hasattr(self, 'stream') and self.stream is not None:
+            self.stream.close()
         
     def record_chunk(self, seconds=5, filename="chunk.wav"):
         """Sync recording for a fixed duration."""
-        stream = self.p.open(format=self.format,
-                            channels=self.channels,
-                            rate=self.rate,
-                            input=True,
-                            frames_per_buffer=self.chunk)
-        
         print(f"Recording {seconds} seconds...")
-        frames = []
-        for _ in range(0, int(self.rate / self.chunk * seconds)):
-            data = stream.read(self.chunk)
-            frames.append(data)
-            
-        stream.stop_stream()
-        stream.close()
+        audio_data = sd.rec(int(seconds * self.rate), samplerate=self.rate, channels=self.channels, dtype='int16')
+        sd.wait() # Wait until recording is finished
         
         output_path = self.output_dir / filename
-        wf = wave.open(str(output_path), 'wb')
-        wf.setnchannels(self.channels)
-        wf.setsampwidth(self.p.get_sample_size(self.format))
-        wf.setframerate(self.rate)
-        wf.writeframes(b''.join(frames))
-        wf.close()
+        with wave.open(str(output_path), 'wb') as wf:
+            wf.setnchannels(self.channels)
+            wf.setsampwidth(2) # 2 bytes for int16
+            wf.setframerate(self.rate)
+            wf.writeframes(audio_data.tobytes())
         return output_path

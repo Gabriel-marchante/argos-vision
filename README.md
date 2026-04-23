@@ -48,6 +48,18 @@ No se limita a "ver" — también **escucha, contrasta y recuerda**.
 
 ---
 
+## 🖥️ Dashboard (Centro de Control)
+
+La interfaz web de Argos está dividida en tres paneles principales diseñados para funcionar como un centro de vigilancia integral:
+
+- **Panel Izquierdo ("Observatory Targets")**: Funciona como un radar de personas. Muestra una lista en tiempo real de todas las caras detectadas por la cámara. A los desconocidos se les asigna un alias automático, mientras que a los conocidos se les identifica por su nombre. Al hacer clic en cualquier persona, se despliega su información.
+- **Panel Central ("Live Feed")**: Muestra la transmisión de vídeo en directo de la cámara, complementada con un efecto visual de escáner (scanline) que refuerza la estética de monitorización avanzada.
+- **Panel Derecho ("Intelligence Debrief")**: Es el cerebro analítico del sistema. Al seleccionar un objetivo en el panel izquierdo, este panel muestra:
+  - **Perfil Dinámico**: Información, gustos, intereses o contexto que la IA ha deducido y almacenado automáticamente al procesar conversaciones pasadas.
+  - **Transcripts Recientes**: Un registro textual de las últimas interacciones captadas por Argos utilizando el modelo Whisper.
+
+---
+
 ## 🏗️ Arquitectura
 
 ```
@@ -145,13 +157,13 @@ argos/
 ## 🧭 Roadmap
 
 - [x] Definición del proyecto
-- [ ] Módulo de reconocimiento facial
-- [ ] Módulo de captura de audio
-- [ ] Módulo de lectura de labios
-- [ ] Fusión audio-visual
-- [ ] Integración con LLM
+- [x] Módulo de reconocimiento facial
+- [x] Módulo de captura de audio
+- [x] Módulo de lectura de labios
+- [ ] Fusión audio-visual avanzada
+- [x] Integración con LLM (OpenAI / Anthropic)
 - [ ] Base de datos vectorial
-- [ ] Interfaz gráfica
+- [x] Interfaz gráfica (Dashboard Web)
 - [ ] Modo offline completo
 - [ ] Cifrado end-to-end de perfiles
 
@@ -168,17 +180,6 @@ ARGOS maneja **datos biométricos y conversaciones privadas**. Este proyecto se 
 
 > ⚠️ **Advertencia legal:** El uso de reconocimiento facial sobre terceros sin su consentimiento puede ser ilegal en tu jurisdicción. El autor no se hace responsable del uso indebido de esta herramienta.
 
----
-
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas. Abre un issue para discutir cambios importantes antes de enviar un PR.
-
-1. Haz fork del proyecto
-2. Crea tu rama de feature (`git checkout -b feature/NuevaCaracteristica`)
-3. Commit tus cambios (`git commit -m 'Añadir nueva característica'`)
-4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
-5. Abre un Pull Request
 
 ---
 
